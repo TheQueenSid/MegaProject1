@@ -1,17 +1,21 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './index.css'
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
 const Login=()=>{
 
-    const navigate =useNavigate();
+    const navigate=useNavigate();
+
+    const token = Cookies.get("jwtToken");
+    
 
     const[allValues,setValuse]=useState({
         username:"",
         password:"",
         showErrorMsg:false,
         errorMsg:""
+       
     });
 
     const onSubmitUserDetails =async(e)=>{
@@ -34,7 +38,7 @@ const Login=()=>{
     const fetchData =await response.json();
     console.log(response);
     console.log(fetchData);
-
+  
     if (response.ok===true) {
         setValuse({...allValues,showErrorMsg:false});
         navigate("/");
@@ -42,8 +46,7 @@ const Login=()=>{
     } else {
         setValuse({...allValues,showErrorMsg:true,errorMsg:fetchData.error_msg});
     }
-
-
+ 
 }
 
     const onChangeUsername = (e)=>{
@@ -53,6 +56,12 @@ const Login=()=>{
     const onChangePassword = (e)=>{
         setValuse({...allValues,password:e.target.value})
        }
+
+       useEffect(()=>{
+        if (token!== undefined) { 
+            navigate("/");
+        }
+       })
     
     return(
   <div className='login-cont'>
@@ -94,10 +103,10 @@ const Login=()=>{
         <button type='submit' className='btn btn-primary'>
             Submit
             </button>
-        {allValues.showErrorMsg?<p className='text-danger'>{allValues.errorMsg}</p> : null}
+        {allValues.showErrorMsg?<p className='text-danger'>{allValues.errorMsg}</p>: null}
     </form>
 
   </div>
     )
 }
-export default Login
+export default Login;
